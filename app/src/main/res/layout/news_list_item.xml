@@ -76,4 +76,8 @@
 
     </RelativeLayout>
 
+    <View android:background="@android:color/white"
+        android:layout_width = "match_parent"
+        android:layout_height="1dp"/>
+
 </RelativeLayout>
