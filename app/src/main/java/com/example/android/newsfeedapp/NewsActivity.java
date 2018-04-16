@@ -5,11 +5,15 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -19,14 +23,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NewsActivity extends AppCompatActivity
-        implements LoaderCallbacks<List<News>> {
+        implements LoaderCallbacks<List<News>>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String LOG_TAG = NewsActivity.class.getName();
 
-    /** URL for news data from the Guardian API */
-    static String queryParameter = "avengers";
-    private static final String GUARDIAN_API_REQUEST_URL =
-            "https://content.guardianapis.com/search?q=" + queryParameter + "&api-key=2ad4c67c-2d9f-4b05-b383-47416ca7fdad&show-elements=image&show-fields=thumbnail";
+    /**
+     * URL for news data from the Guardian API
+     */
+    static String queryParameter = "";
+//    private static final String GUARDIAN_API_REQUEST_URL = "https://content.guardianapis.com/search?q=avengers&api-key=2ad4c67c-2d9f-4b05-b383-47416ca7fdad&show-elements=image&show-fields=thumbnail";
+    private static final String GUARDIAN_API_REQUEST_URL = "https://content.guardianapis.com/search";
 
     /**
      * Constant value for the news item loader ID. We can choose any integer.
@@ -34,10 +41,14 @@ public class NewsActivity extends AppCompatActivity
      */
     private static final int NEWS_ITEM_LOADER_ID = 1;
 
-    /** Adapter for the list of news items */
+    /**
+     * Adapter for the list of news items
+     */
     private NewsAdapter mAdapter;
 
-    /** TextView that is displayed when the list is empty */
+    /**
+     * TextView that is displayed when the list is empty
+     */
     private TextView mEmptyStateTextView;
 
     @Override
@@ -57,6 +68,12 @@ public class NewsActivity extends AppCompatActivity
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         newsItemListView.setAdapter(mAdapter);
+
+        // Obtain a reference to the SharedPreferences file for this app
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        // And register to be notified of preference changes
+        // So we know when the user has adjusted the query settings
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
         // to open a website with more information about the selected news item.
@@ -105,9 +122,53 @@ public class NewsActivity extends AppCompatActivity
     }
 
     @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        if (key.equals(getString(R.string.settings_query_parameter_key)) ||
+                key.equals(getString(R.string.settings_maximum_number_of_news_items_key))){
+            // Clear the ListView as a new query will be kicked off
+            mAdapter.clear();
+
+            // Hide the empty state text view as the loading indicator will be displayed
+            mEmptyStateTextView.setVisibility(View.GONE);
+
+            // Show the loading indicator while new data is being fetched
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.VISIBLE);
+
+            // Restart the loader to re-query the Guardian API as the query settings have been updated
+            getLoaderManager().restartLoader(NEWS_ITEM_LOADER_ID, null, this);
+        }
+    }
+
+    @Override
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
-        // Create a new loader for the given URL
-        return new NewsLoader(this, GUARDIAN_API_REQUEST_URL);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // getString retrieves a String value from the preferences. The second parameter is the default value for this preference.
+        String queryParameter = sharedPrefs.getString(
+                getString(R.string.settings_query_parameter_key),
+                getString(R.string.settings_query_parameter_default));
+
+        String maximumNumberOfNewsItems = sharedPrefs.getString(
+                getString(R.string.settings_maximum_number_of_news_items_key),
+                getString(R.string.settings_maximum_number_of_news_items_default));
+
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(GUARDIAN_API_REQUEST_URL);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value. For example, the `format=geojson`
+        uriBuilder.appendQueryParameter("q", queryParameter);
+        uriBuilder.appendQueryParameter("api-key", "2ad4c67c-2d9f-4b05-b383-47416ca7fdad");
+        uriBuilder.appendQueryParameter("show-elements", "image");
+        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
+        uriBuilder.appendQueryParameter("page-size", maximumNumberOfNewsItems);
+
+        // Return the completed uri "https://content.guardianapis.com/search?q=avengers&api-key=2ad4c67c-2d9f-4b05-b383-47416ca7fdad&show-elements=image&show-fields=thumbnail"
+        return new NewsLoader(this, uriBuilder.toString());
     }
 
     @Override
@@ -126,7 +187,9 @@ public class NewsActivity extends AppCompatActivity
         // data set. This will trigger the ListView to update.
         if (newsItemsList != null && !newsItemsList.isEmpty()) {
             mAdapter.addAll(newsItemsList);
-//            updateUi(earthquakes);
+            //Executing the following line instead of the above line causes compile time error.
+            //Therefore, I commented out the line below and used the line above
+//            updateUi(newsItemsList);
         }
     }
 
@@ -135,4 +198,23 @@ public class NewsActivity extends AppCompatActivity
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
 }
