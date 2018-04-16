@@ -15,6 +15,8 @@
  */
 package com.example.android.newsfeedapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -195,6 +197,10 @@ public final class QueryUtils {
                 // Extract the value for the key called "thumbnail"
                 String imageUrl = imageInfo.getString("thumbnail");
 
+                //Get the news item image bitmap
+                Bitmap thumbnailBitmap = null;
+                thumbnailBitmap = BitmapFactory.decodeStream(createUrl(imageUrl).openConnection().getInputStream());
+
                 // Extract the value for the key called "webPublicationDate"
                 String publicationDate = currentNewsItem.getString("webPublicationDate");
 
@@ -203,7 +209,7 @@ public final class QueryUtils {
 
                 // Create a new {@link News} object with the magnitude, location, time,
                 // and url from the JSON response.
-                News news = new News(title, section, imageUrl, publicationDate, url);
+                News news = new News(title, section, thumbnailBitmap, publicationDate, url);
 
                 // Add the new {@link News} item to the list of news items.
                 newsItemsList.add(news);
@@ -214,6 +220,8 @@ public final class QueryUtils {
             // catch the exception here, so the app doesn't crash. Print a log message
             // with the message from the exception.
             Log.e(LOG_TAG, "Problem parsing the news item JSON results", e);
+        }  catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request to get the image bitmap for a news item.", e);
         }
 
         // Return the list of news items

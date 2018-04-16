@@ -4,6 +4,8 @@ package com.example.android.newsfeedapp;
  * Created by Houst on 2018-04-11.
  */
 
+import android.graphics.Bitmap;
+
 /**
  * A {@link News} object contains information related to a news item.
  */
@@ -16,7 +18,7 @@ public class News {
     private String mSection;
 
     /** url of the thumbnail image of the news item */
-    private String mImageUrl;
+    private Bitmap mThumbnailBitmap;
 
     /** publication date of th news item */
     private String mPublicationDate;
@@ -24,10 +26,10 @@ public class News {
     /** Website URL of the news item */
     private String mUrl;
 
-    public News(String title, String section, String imageUrl, String publicationDate, String url) {
+    public News(String title, String section, Bitmap thumbnailBitmap, String publicationDate, String url) {
         this.mTitle = title;
         this.mSection = section;
-        this.mImageUrl = imageUrl;
+        this.mThumbnailBitmap = thumbnailBitmap;
         this.mPublicationDate = publicationDate;
         this.mUrl = url;
     }
@@ -40,8 +42,8 @@ public class News {
         return mSection;
     }
 
-    public String getImageUrl() {
-        return mImageUrl;
+    public Bitmap getThumbnailBitmap() {
+        return mThumbnailBitmap;
     }
 
     public String getPublicationDate() {

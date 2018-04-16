@@ -16,6 +16,8 @@
 package com.example.android.newsfeedapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,11 +96,11 @@ public class NewsAdapter extends ArrayAdapter<News> {
         publicationDateTextView.setText(formattedDate + " " + formattedTime);
 
         // Find the ImageView in the news_list_item.xml layout with the ID news_item_image_view.
-        ImageView imageView = (ImageView) listItemView.findViewById(R.id.news_item_image_view);
-        // Download and display the image based on the resource ID
-        new DownloadImageTask(imageView).execute(newsItem.getImageUrl());
+        ImageView thumbnailImageView = (ImageView) listItemView.findViewById(R.id.news_item_image_view);
+        // Set the thumbnail image bitmap
+        thumbnailImageView.setImageBitmap(formatImageFromBitmap(newsItem.getThumbnailBitmap()));
         // Make sure the view is visible
-        imageView.setVisibility(View.VISIBLE);
+        thumbnailImageView.setVisibility(View.VISIBLE);
 
         // Return the list item view that is now showing the appropriate data
         return listItemView;
@@ -119,4 +121,23 @@ public class NewsAdapter extends ArrayAdapter<News> {
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
         return timeFormat.format(dateObject);
     }
+
+    /**
+     * Return the news item thumbnail image bitmap or a blank bitmap
+     */
+    private Bitmap formatImageFromBitmap(Bitmap thumbnailBitmap) {
+        //Bitmap for image
+        Bitmap returnBitmap;
+
+        //Check if the thumbnailBitmap is null
+        if (thumbnailBitmap == null) {
+            //If thumbnailBitmap is null, return a default image
+            returnBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.noimage);
+        } else {
+            returnBitmap = thumbnailBitmap;
+        }
+
+        return returnBitmap;
+    }
+
 }
