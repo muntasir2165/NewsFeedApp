@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2016 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2016 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,22 +11,31 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
--->
-<!-- Layout for a single list item that displays a news item -->
+--><!-- Layout for a single list item that displays a news item -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
     android:background="@color/background"
     android:minHeight="@dimen/list_item_height"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
 
     <ImageView
         android:id="@+id/news_item_image_view"
-        android:layout_width="@dimen/list_item_height"
-        android:layout_height="@dimen/list_item_height"
-        android:paddingLeft="8dp"/>
+        android:layout_width="144dp"
+        android:layout_height="104dp" />
+
+    <TextView
+        android:id="@+id/author_text_view"
+        android:layout_width="144dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/news_item_image_view"
+        android:paddingLeft="8dp"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/white"
+        tools:text="John Doe" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -75,9 +83,5 @@
         </LinearLayout>
 
     </RelativeLayout>
-
-    <View android:background="@android:color/white"
-        android:layout_width = "match_parent"
-        android:layout_height="1dp"/>
 
 </RelativeLayout>

@@ -44,6 +44,12 @@ public class SettingsActivity extends AppCompatActivity {
 
             Preference maximumNumberOfNewsItems = findPreference(getString(R.string.settings_maximum_number_of_news_items_key));
             bindPreferenceSummaryToValue(maximumNumberOfNewsItems);
+
+            Preference newsItemsOrderBy = findPreference(getString(R.string.settings_news_items_order_by_key));
+            bindPreferenceSummaryToValue(newsItemsOrderBy);
+
+            Preference newsItemsOrderDate = findPreference(getString(R.string.settings_news_items_order_date_key));
+            bindPreferenceSummaryToValue(newsItemsOrderDate);
         }
 
         @Override

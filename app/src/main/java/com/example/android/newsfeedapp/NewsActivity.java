@@ -31,7 +31,6 @@ public class NewsActivity extends AppCompatActivity
     /**
      * URL for news data from the Guardian API
      */
-    static String queryParameter = "";
 //    private static final String GUARDIAN_API_REQUEST_URL = "https://content.guardianapis.com/search?q=avengers&api-key=2ad4c67c-2d9f-4b05-b383-47416ca7fdad&show-elements=image&show-fields=thumbnail";
     private static final String GUARDIAN_API_REQUEST_URL = "https://content.guardianapis.com/search";
 
@@ -124,7 +123,9 @@ public class NewsActivity extends AppCompatActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (key.equals(getString(R.string.settings_query_parameter_key)) ||
-                key.equals(getString(R.string.settings_maximum_number_of_news_items_key))){
+                key.equals(getString(R.string.settings_maximum_number_of_news_items_key)) ||
+                key.equals(getString(R.string.settings_news_items_order_by_key)) ||
+                key.equals(getString(R.string.settings_news_items_order_date_key))){
             // Clear the ListView as a new query will be kicked off
             mAdapter.clear();
 
@@ -154,6 +155,14 @@ public class NewsActivity extends AppCompatActivity
                 getString(R.string.settings_maximum_number_of_news_items_key),
                 getString(R.string.settings_maximum_number_of_news_items_default));
 
+        String newsItemsOrderBy = sharedPrefs.getString(
+                getString(R.string.settings_news_items_order_by_key),
+                getString(R.string.settings_news_items_order_by_default));
+
+        String newsItemsOrderDate = sharedPrefs.getString(
+                getString(R.string.settings_news_items_order_date_key),
+                getString(R.string.settings_news_items_order_date_default));
+
         // parse breaks apart the URI string that's passed into its parameter
         Uri baseUri = Uri.parse(GUARDIAN_API_REQUEST_URL);
 
@@ -164,8 +173,10 @@ public class NewsActivity extends AppCompatActivity
         uriBuilder.appendQueryParameter("q", queryParameter);
         uriBuilder.appendQueryParameter("api-key", "2ad4c67c-2d9f-4b05-b383-47416ca7fdad");
         uriBuilder.appendQueryParameter("show-elements", "image");
-        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
+        uriBuilder.appendQueryParameter("show-fields", "thumbnail,byline");
         uriBuilder.appendQueryParameter("page-size", maximumNumberOfNewsItems);
+        uriBuilder.appendQueryParameter("order-by", newsItemsOrderBy);
+        uriBuilder.appendQueryParameter("order-date", newsItemsOrderDate);
 
         // Return the completed uri "https://content.guardianapis.com/search?q=avengers&api-key=2ad4c67c-2d9f-4b05-b383-47416ca7fdad&show-elements=image&show-fields=thumbnail"
         return new NewsLoader(this, uriBuilder.toString());

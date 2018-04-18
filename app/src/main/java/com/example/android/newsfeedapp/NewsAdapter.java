@@ -18,6 +18,7 @@ package com.example.android.newsfeedapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,12 @@ public class NewsAdapter extends ArrayAdapter<News> {
         TextView newsItemTitleTextView = (TextView) listItemView.findViewById(R.id.news_title_text_view);
         // Display the title of the current news item in that TextView
         newsItemTitleTextView.setText(newsItem.getTitle());
+
+        // Find the TextView with view ID author_text_view
+        TextView authorTextView = (TextView) listItemView.findViewById(R.id.author_text_view);
+        // Display the author of the current news item in that TextView
+        // If the author string is empty or null, then print out "by Unknown Author"
+        authorTextView.setText("by " + (TextUtils.isEmpty(newsItem.getAuthor())? "Unknown Author" : newsItem.getAuthor()));
 
         // Find the TextView with view ID section_text_view
         TextView sectionTextView = (TextView) listItemView.findViewById(R.id.section_text_view);

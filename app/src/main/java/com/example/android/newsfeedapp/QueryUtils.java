@@ -194,6 +194,9 @@ public final class QueryUtils {
                 // for that news item.
                 JSONObject imageInfo = currentNewsItem.getJSONObject("fields");
 
+                // Extract the value for the key called "byline"
+                String author = imageInfo.getString("byline");
+
                 // Extract the value for the key called "thumbnail"
                 String imageUrl = imageInfo.getString("thumbnail");
 
@@ -209,7 +212,7 @@ public final class QueryUtils {
 
                 // Create a new {@link News} object with the magnitude, location, time,
                 // and url from the JSON response.
-                News news = new News(title, section, thumbnailBitmap, publicationDate, url);
+                News news = new News(title, author, section, thumbnailBitmap, publicationDate, url);
 
                 // Add the new {@link News} item to the list of news items.
                 newsItemsList.add(news);

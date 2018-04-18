@@ -14,6 +14,9 @@ public class News {
     /** Title of the news item */
     private String mTitle;
 
+    /** Author of the news item */
+    private String mAuthor;
+
     /** Section that the news item belongs to*/
     private String mSection;
 
@@ -26,8 +29,9 @@ public class News {
     /** Website URL of the news item */
     private String mUrl;
 
-    public News(String title, String section, Bitmap thumbnailBitmap, String publicationDate, String url) {
+    public News(String title, String author, String section, Bitmap thumbnailBitmap, String publicationDate, String url) {
         this.mTitle = title;
+        this.mAuthor = author;
         this.mSection = section;
         this.mThumbnailBitmap = thumbnailBitmap;
         this.mPublicationDate = publicationDate;
@@ -36,6 +40,10 @@ public class News {
 
     public String getTitle() {
         return mTitle;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
     }
 
     public String getSection() {

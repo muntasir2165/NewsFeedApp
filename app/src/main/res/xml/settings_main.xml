@@ -30,4 +30,18 @@
         android:key="@string/settings_maximum_number_of_news_items_key"
         android:title="@string/settings_maximum_number_of_news_items_label" />
 
+    <ListPreference
+        android:defaultValue="@string/settings_news_items_order_by_default"
+        android:entries="@array/settings_news_items_order_by_labels"
+        android:entryValues="@array/settings_news_items_order_by_values"
+        android:key="@string/settings_news_items_order_by_key"
+        android:title="@string/settings_news_items_order_by_label" />
+
+    <ListPreference
+        android:defaultValue="@string/settings_news_items_order_date_default"
+        android:entries="@array/settings_news_items_order_date_labels"
+        android:entryValues="@array/settings_news_items_order_date_values"
+        android:key="@string/settings_news_items_order_date_key"
+        android:title="@string/settings_news_items_order_date_label" />
+
 </PreferenceScreen>
